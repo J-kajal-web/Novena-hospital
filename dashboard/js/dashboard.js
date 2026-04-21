@@ -5,9 +5,49 @@
     appointments: [],
     contacts: []
   };
+  var apiBaseUrl = resolveApiBaseUrl();
 
   function byId(id) {
     return document.getElementById(id);
+  }
+
+  function resolveApiBaseUrl() {
+    var customBaseUrl = window.__API_BASE_URL__;
+
+    if (typeof customBaseUrl === 'string' && customBaseUrl.trim()) {
+      return customBaseUrl.trim().replace(/\/+$/, '');
+    }
+
+    var location = window.location;
+    var isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+
+    if (location.protocol === 'file:' || (isLocalhost && location.port && location.port !== '5000')) {
+      return 'http://localhost:5000';
+    }
+
+    return location.origin;
+  }
+
+  function apiUrl(path) {
+    var normalizedPath = path || '';
+
+    if (/^https?:\/\//i.test(normalizedPath)) {
+      return normalizedPath;
+    }
+
+    if (normalizedPath.indexOf('/api/') === 0) {
+      return apiBaseUrl + normalizedPath;
+    }
+
+    if (normalizedPath.indexOf('api/') === 0) {
+      return apiBaseUrl + '/' + normalizedPath;
+    }
+
+    if (normalizedPath.charAt(0) !== '/') {
+      normalizedPath = '/' + normalizedPath;
+    }
+
+    return apiBaseUrl + '/api' + normalizedPath;
   }
 
   function escapeHtml(text) {
@@ -147,7 +187,7 @@
     );
 
     try {
-      var result = await Promise.all([fetchJson('/api/appointments'), fetchJson('/api/contact')]);
+      var result = await Promise.all([fetchJson(apiUrl('/appointments')), fetchJson(apiUrl('/contact'))]);
       var appointments = result[0].data || [];
       var contacts = result[1].data || [];
 
@@ -309,7 +349,7 @@
     );
 
     try {
-      var result = await fetchJson('/api/appointments');
+      var result = await fetchJson(apiUrl('/appointments'));
       dashboardState.appointments = result.data || [];
       renderAppointmentsTable(getFilteredAppointments());
     } catch (error) {
@@ -333,7 +373,7 @@
       var status = action === 'confirm' ? 'Confirmed' : 'Cancelled';
 
       try {
-        await fetchJson('/api/appointments/' + appointmentId, {
+        await fetchJson(apiUrl('/appointments/' + appointmentId), {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -360,7 +400,7 @@
       }
 
       try {
-        await fetchJson('/api/appointments/' + appointmentId, {
+        await fetchJson(apiUrl('/appointments/' + appointmentId), {
           method: 'DELETE'
         });
 
@@ -487,7 +527,7 @@
     setSectionVisibility('contactsLoadingState', 'contactsEmptyState', 'contactsTableWrapper', 'loading');
 
     try {
-      var result = await fetchJson('/api/contact');
+      var result = await fetchJson(apiUrl('/contact'));
       dashboardState.contacts = result.data || [];
       renderContactsTable(getFilteredContacts());
     } catch (error) {
@@ -511,7 +551,7 @@
       var reviewedValue = action === 'review';
 
       try {
-        await fetchJson('/api/contact/' + contactId, {
+        await fetchJson(apiUrl('/contact/' + contactId), {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -538,7 +578,7 @@
       }
 
       try {
-        await fetchJson('/api/contact/' + contactId, {
+        await fetchJson(apiUrl('/contact/' + contactId), {
           method: 'DELETE'
         });
 

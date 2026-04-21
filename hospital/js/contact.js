@@ -1,6 +1,43 @@
 (function () {
     'use strict';
 
+    function resolveApiBaseUrl() {
+        var customBaseUrl = window.__API_BASE_URL__;
+
+        if (typeof customBaseUrl === 'string' && customBaseUrl.trim()) {
+            return customBaseUrl.trim().replace(/\/+$/, '');
+        }
+
+        var location = window.location;
+        var isLocalhost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+
+        if (location.protocol === 'file:' || (isLocalhost && location.port && location.port !== '5000')) {
+            return 'http://localhost:5000';
+        }
+
+        return location.origin;
+    }
+
+    function buildRequestUrl(action) {
+        if (!action) {
+            return resolveApiBaseUrl() + '/api';
+        }
+
+        if (/^https?:\/\//i.test(action)) {
+            return action;
+        }
+
+        if (action.indexOf('/api') === 0) {
+            return resolveApiBaseUrl() + action;
+        }
+
+        if (action.indexOf('api/') === 0) {
+            return resolveApiBaseUrl() + '/' + action;
+        }
+
+        return action;
+    }
+
     function showMessage(messageBox, text, type) {
         if (!messageBox) {
             window.alert(text);
@@ -58,7 +95,7 @@
             }
 
             try {
-                var response = await fetch(form.getAttribute('action'), {
+                var response = await fetch(buildRequestUrl(form.getAttribute('action')), {
                     method: (form.getAttribute('method') || 'POST').toUpperCase(),
                     headers: {
                         'Content-Type': 'application/json',
