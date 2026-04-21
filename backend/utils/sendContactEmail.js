@@ -9,17 +9,24 @@ function createTransporter() {
     EMAIL_PASS
   } = process.env;
 
-  if (!EMAIL_HOST || !EMAIL_PORT || !EMAIL_USER || !EMAIL_PASS) {
+  const host = EMAIL_HOST ? EMAIL_HOST.trim() : '';
+  const port = Number(String(EMAIL_PORT || '').trim());
+  const secure = String(EMAIL_SECURE || '').trim().toLowerCase() === 'true';
+  const user = EMAIL_USER ? EMAIL_USER.trim() : '';
+  // Gmail app passwords are often copied with spaces between chunks.
+  const pass = EMAIL_PASS ? EMAIL_PASS.replace(/\s+/g, '') : '';
+
+  if (!host || !port || !user || !pass) {
     throw new Error('Email environment variables are missing.');
   }
 
   return nodemailer.createTransport({
-    host: EMAIL_HOST,
-    port: Number(EMAIL_PORT),
-    secure: String(EMAIL_SECURE).toLowerCase() === 'true',
+    host,
+    port,
+    secure,
     auth: {
-      user: EMAIL_USER,
-      pass: EMAIL_PASS
+      user,
+      pass
     }
   });
 }

@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv');
+const cors = require('cors');
 
 const connectDB = require('./config/db');
 const contactRoutes = require('./routes/contactRoutes');
@@ -10,6 +11,27 @@ dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+function resolveCorsOrigin() {
+  const corsOrigin = (process.env.CORS_ORIGIN || '*').trim();
+
+  if (corsOrigin === '*') {
+    // Allow all origins by default for quick frontend integration.
+    return true;
+  }
+
+  return corsOrigin
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+}
+
+const corsOptions = {
+  origin: resolveCorsOrigin()
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Allow the server to read JSON and simple form data.
 app.use(express.json());

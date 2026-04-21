@@ -40,17 +40,14 @@ async function submitContactForm(req, res) {
       await savedMessage.save();
 
       console.error('Email sending failed:', emailError.message);
-
-      return res.status(500).json({
-        success: false,
-        message:
-          'Your message was saved, but the email could not be sent. Please check the email settings.'
-      });
     }
 
     return res.status(201).json({
       success: true,
-      message: 'Your message has been sent successfully.',
+      message:
+        savedMessage.emailStatus === 'sent'
+          ? 'Your message has been sent successfully.'
+          : 'Your message was submitted successfully. Email notification is currently unavailable.',
       data: savedMessage
     });
   } catch (error) {
