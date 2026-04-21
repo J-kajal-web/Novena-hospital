@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Hospital</title>
+  <link rel="stylesheet" href="/plugins/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/plugins/icofont/icofont.min.css">
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css">
+</head>
+<body class="dashboard-body" data-requires-auth="true" data-dashboard-page="overview">
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+      <a class="dashboard-brand" href="/dashboard/admin-dashboard.html">
+        <img src="/images/logo.png" alt="Hospital Logo">
+        <span>Hospital Admin</span>
+      </a>
+
+      <p class="sidebar-heading">Main Menu</p>
+      <a class="sidebar-link" data-page="admin-dashboard.html" href="/dashboard/admin-dashboard.html">
+        <i class="icofont-dashboard-web"></i> Overview
+      </a>
+      <a class="sidebar-link" data-page="appointments-dashboard.html" href="/dashboard/appointments-dashboard.html">
+        <i class="icofont-calendar"></i> Appointments
+      </a>
+      <a class="sidebar-link" data-page="contacts-dashboard.html" href="/dashboard/contacts-dashboard.html">
+        <i class="icofont-email"></i> Contact Messages
+      </a>
+
+      <p class="sidebar-heading">Website</p>
+      <a class="sidebar-link" href="/index.html">
+        <i class="icofont-home"></i> Website Home
+      </a>
+      <a class="sidebar-link" href="/dashboard/index.html">
+        <i class="icofont-ui-lock"></i> Login Page
+      </a>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+          <div>
+            <div class="d-flex align-items-center gap-2">
+              <button id="sidebarToggle" class="sidebar-toggle d-lg-none" type="button">
+                <i class="icofont-navigation-menu"></i>
+              </button>
+              <h1>Dashboard Overview</h1>
+            </div>
+            <p class="dashboard-subtitle">Monitor hospital website submissions in one place.</p>
+          </div>
+          <div class="toolbar">
+            <button id="overviewRefreshBtn" class="btn btn-outline-primary" type="button">
+              <i class="icofont-refresh"></i> Refresh
+            </button>
+            <button class="btn btn-danger js-logout" type="button">
+              <i class="icofont-logout"></i> Logout
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div class="alert-area">
+        <div id="pageAlert" class="alert d-none" role="alert"></div>
+      </div>
+
+      <section class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-title">Total Appointments</div>
+          <div id="totalAppointmentsValue" class="summary-value">0</div>
+          <div class="summary-note">All booking requests</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-title">Pending Appointments</div>
+          <div id="pendingAppointmentsValue" class="summary-value">0</div>
+          <div class="summary-note">Need admin action</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-title">Confirmed Appointments</div>
+          <div id="confirmedAppointmentsValue" class="summary-value">0</div>
+          <div class="summary-note">Approved bookings</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-title">Cancelled Appointments</div>
+          <div id="cancelledAppointmentsValue" class="summary-value">0</div>
+          <div class="summary-note">Declined requests</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-title">Total Contact Messages</div>
+          <div id="totalContactsValue" class="summary-value">0</div>
+          <div class="summary-note">Queries from website visitors</div>
+        </div>
+      </section>
+
+      <section class="data-card">
+        <h2 class="section-title">Recent Appointments</h2>
+
+        <div id="overviewLoadingState" class="state-box d-none">
+          <div class="spinner-border text-primary" role="status"></div>
+          <div>Loading dashboard data...</div>
+        </div>
+
+        <div id="overviewEmptyState" class="state-box d-none"></div>
+
+        <div id="recentAppointmentsWrapper" class="table-responsive d-none">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Patient Name</th>
+                <th>Department</th>
+                <th>Doctor</th>
+                <th>Date & Time</th>
+                <th>Status</th>
+                <th>Created At</th>
+              </tr>
+            </thead>
+            <tbody id="recentAppointmentsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+  <script src="/dashboard/js/dashboard-auth.js"></script>
+  <script src="/dashboard/js/dashboard.js"></script>
+</body>
+</html>

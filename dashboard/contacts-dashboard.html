@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contacts Dashboard - Hospital</title>
+  <link rel="stylesheet" href="/plugins/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/plugins/icofont/icofont.min.css">
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css">
+</head>
+<body class="dashboard-body" data-requires-auth="true" data-dashboard-page="contacts">
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+      <a class="dashboard-brand" href="/dashboard/admin-dashboard.html">
+        <img src="/images/logo.png" alt="Hospital Logo">
+        <span>Hospital Admin</span>
+      </a>
+
+      <p class="sidebar-heading">Main Menu</p>
+      <a class="sidebar-link" data-page="admin-dashboard.html" href="/dashboard/admin-dashboard.html">
+        <i class="icofont-dashboard-web"></i> Overview
+      </a>
+      <a class="sidebar-link" data-page="appointments-dashboard.html" href="/dashboard/appointments-dashboard.html">
+        <i class="icofont-calendar"></i> Appointments
+      </a>
+      <a class="sidebar-link" data-page="contacts-dashboard.html" href="/dashboard/contacts-dashboard.html">
+        <i class="icofont-email"></i> Contact Messages
+      </a>
+
+      <p class="sidebar-heading">Website</p>
+      <a class="sidebar-link" href="/index.html">
+        <i class="icofont-home"></i> Website Home
+      </a>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+          <div>
+            <div class="d-flex align-items-center gap-2">
+              <button id="sidebarToggle" class="sidebar-toggle d-lg-none" type="button">
+                <i class="icofont-navigation-menu"></i>
+              </button>
+              <h1>Contact Messages Dashboard</h1>
+            </div>
+            <p class="dashboard-subtitle">Read visitor queries, mark them reviewed, and clean up old messages.</p>
+          </div>
+          <div class="toolbar">
+            <input id="contactSearch" class="form-control" type="text" placeholder="Search contacts...">
+            <select id="contactReviewedFilter" class="form-select">
+              <option value="all">All Messages</option>
+              <option value="reviewed">Reviewed</option>
+              <option value="not-reviewed">Not Reviewed</option>
+            </select>
+            <button id="contactRefreshBtn" class="btn btn-outline-primary" type="button">
+              <i class="icofont-refresh"></i> Refresh
+            </button>
+            <button class="btn btn-danger js-logout" type="button">
+              <i class="icofont-logout"></i> Logout
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div class="alert-area">
+        <div id="pageAlert" class="alert d-none" role="alert"></div>
+      </div>
+
+      <section class="data-card">
+        <h2 class="section-title">All Contact Messages</h2>
+
+        <div id="contactsLoadingState" class="state-box d-none">
+          <div class="spinner-border text-primary" role="status"></div>
+          <div>Loading contact messages...</div>
+        </div>
+
+        <div id="contactsEmptyState" class="state-box d-none"></div>
+
+        <div id="contactsTableWrapper" class="table-responsive d-none">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Subject</th>
+                <th>Message</th>
+                <th>Reviewed</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="contactsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+  <script src="/dashboard/js/dashboard-auth.js"></script>
+  <script src="/dashboard/js/dashboard.js"></script>
+</body>
+</html>

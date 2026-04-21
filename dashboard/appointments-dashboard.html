@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Appointments Dashboard - Hospital</title>
+  <link rel="stylesheet" href="/plugins/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/plugins/icofont/icofont.min.css">
+  <link rel="stylesheet" href="/dashboard/css/dashboard.css">
+</head>
+<body class="dashboard-body" data-requires-auth="true" data-dashboard-page="appointments">
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+      <a class="dashboard-brand" href="/dashboard/admin-dashboard.html">
+        <img src="/images/logo.png" alt="Hospital Logo">
+        <span>Hospital Admin</span>
+      </a>
+
+      <p class="sidebar-heading">Main Menu</p>
+      <a class="sidebar-link" data-page="admin-dashboard.html" href="/dashboard/admin-dashboard.html">
+        <i class="icofont-dashboard-web"></i> Overview
+      </a>
+      <a class="sidebar-link" data-page="appointments-dashboard.html" href="/dashboard/appointments-dashboard.html">
+        <i class="icofont-calendar"></i> Appointments
+      </a>
+      <a class="sidebar-link" data-page="contacts-dashboard.html" href="/dashboard/contacts-dashboard.html">
+        <i class="icofont-email"></i> Contact Messages
+      </a>
+
+      <p class="sidebar-heading">Website</p>
+      <a class="sidebar-link" href="/index.html">
+        <i class="icofont-home"></i> Website Home
+      </a>
+    </aside>
+
+    <main class="dashboard-main">
+      <header class="dashboard-header">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+          <div>
+            <div class="d-flex align-items-center gap-2">
+              <button id="sidebarToggle" class="sidebar-toggle d-lg-none" type="button">
+                <i class="icofont-navigation-menu"></i>
+              </button>
+              <h1>Appointments Dashboard</h1>
+            </div>
+            <p class="dashboard-subtitle">Search, filter, confirm, cancel, and delete appointment requests.</p>
+          </div>
+          <div class="toolbar">
+            <input id="appointmentSearch" class="form-control" type="text" placeholder="Search appointments...">
+            <select id="appointmentStatusFilter" class="form-select">
+              <option value="all">All Status</option>
+              <option value="Pending">Pending</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+            <button id="appointmentRefreshBtn" class="btn btn-outline-primary" type="button">
+              <i class="icofont-refresh"></i> Refresh
+            </button>
+            <button class="btn btn-danger js-logout" type="button">
+              <i class="icofont-logout"></i> Logout
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div class="alert-area">
+        <div id="pageAlert" class="alert d-none" role="alert"></div>
+      </div>
+
+      <section class="data-card">
+        <h2 class="section-title">All Appointments</h2>
+
+        <div id="appointmentsLoadingState" class="state-box d-none">
+          <div class="spinner-border text-primary" role="status"></div>
+          <div>Loading appointments...</div>
+        </div>
+
+        <div id="appointmentsEmptyState" class="state-box d-none"></div>
+
+        <div id="appointmentsTableWrapper" class="table-responsive d-none">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Patient Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Date & Time</th>
+                <th>Department</th>
+                <th>Doctor</th>
+                <th>Message</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="appointmentsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+  <script src="/dashboard/js/dashboard-auth.js"></script>
+  <script src="/dashboard/js/dashboard.js"></script>
+</body>
+</html>
