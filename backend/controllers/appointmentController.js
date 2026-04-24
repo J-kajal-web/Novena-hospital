@@ -1,9 +1,23 @@
 const Appointment = require('../models/Appointment');
+const sendAppointmentEmail = require('../utils/sendAppointmentEmail');
 
 const APPOINTMENT_STATUSES = ['Pending', 'Confirmed', 'Completed', 'Cancelled'];
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+async function saveEmailStatusIfSupported(appointment, status) {
+  if (!appointment || !appointment.schema.path('emailStatus')) {
+    return;
+  }
+
+  try {
+    appointment.emailStatus = status;
+    await appointment.save();
+  } catch (statusError) {
+    console.error(`Appointment email status update failed (${status}):`, statusError);
+  }
 }
 
 async function createAppointment(req, res) {
@@ -35,12 +49,27 @@ async function createAppointment(req, res) {
       message
     });
 
-    return res.status(201).json({
-      success: true,
-      message: 'Appointment booked successfully.',
-      appointment,
-      appointmentId: appointment._id
-    });
+    try {
+      await sendAppointmentEmail(appointment);
+      await saveEmailStatusIfSupported(appointment, 'sent');
+
+      return res.status(201).json({
+        success: true,
+        message: 'Appointment booked successfully and email notification was sent.',
+        appointment,
+        appointmentId: appointment._id
+      });
+    } catch (emailError) {
+      await saveEmailStatusIfSupported(appointment, 'failed');
+      console.error('Appointment email sending failed:', emailError);
+
+      return res.status(201).json({
+        success: true,
+        message: 'Appointment was saved successfully, but email notification failed.',
+        appointment,
+        appointmentId: appointment._id
+      });
+    }
   } catch (error) {
     console.error('Appointment creation error:', error.message);
 
