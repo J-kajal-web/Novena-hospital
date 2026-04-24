@@ -1,5 +1,6 @@
 const ContactMessage = require('../models/ContactMessage');
 const sendContactEmail = require('../utils/sendContactEmail');
+const sendWhatsApp = require('../utils/sendWhatsApp');
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -35,11 +36,21 @@ async function submitContactForm(req, res) {
       await sendContactEmail(savedMessage);
       savedMessage.emailStatus = 'sent';
       await savedMessage.save();
+
+      // Send WhatsApp notifications (non-blocking, won't affect response)
+      sendWhatsApp.sendContactWhatsAppNotifications(savedMessage).catch((waError) => {
+        console.error('WhatsApp notification error:', waError.message);
+      });
     } catch (emailError) {
       savedMessage.emailStatus = 'failed';
       await savedMessage.save();
 
       console.error('Email sending failed:', emailError.message);
+
+      // Still try WhatsApp even if email failed (non-blocking)
+      sendWhatsApp.sendContactWhatsAppNotifications(savedMessage).catch((waError) => {
+        console.error('WhatsApp notification error:', waError.message);
+      });
     }
 
     return res.status(201).json({

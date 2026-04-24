@@ -1,5 +1,6 @@
 const Appointment = require('../models/Appointment');
 const sendAppointmentEmail = require('../utils/sendAppointmentEmail');
+const sendWhatsApp = require('../utils/sendWhatsApp');
 
 const APPOINTMENT_STATUSES = ['Pending', 'Confirmed', 'Completed', 'Cancelled'];
 
@@ -53,6 +54,11 @@ async function createAppointment(req, res) {
       await sendAppointmentEmail(appointment);
       await saveEmailStatusIfSupported(appointment, 'sent');
 
+      // Send WhatsApp notifications (non-blocking, won't affect response)
+      sendWhatsApp.sendAppointmentWhatsAppNotifications(appointment).catch((waError) => {
+        console.error('WhatsApp notification error:', waError.message);
+      });
+
       return res.status(201).json({
         success: true,
         message: 'Appointment booked successfully and email notification was sent.',
@@ -62,6 +68,11 @@ async function createAppointment(req, res) {
     } catch (emailError) {
       await saveEmailStatusIfSupported(appointment, 'failed');
       console.error('Appointment email sending failed:', emailError);
+
+      // Still try WhatsApp even if email failed (non-blocking)
+      sendWhatsApp.sendAppointmentWhatsAppNotifications(appointment).catch((waError) => {
+        console.error('WhatsApp notification error:', waError.message);
+      });
 
       return res.status(201).json({
         success: true,
